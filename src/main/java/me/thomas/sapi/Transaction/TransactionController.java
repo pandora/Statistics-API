@@ -9,6 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import me.thomas.sapi.statistics.Statistics;
 
+/**
+ * The main Transaction controller invoked when 'POST /transactions' calls are made.
+ */
 public class TransactionController {
 
     private static Statistics stats = new Statistics();

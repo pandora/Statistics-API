@@ -1,12 +1,20 @@
 package me.thomas.sapi.Transaction;
 
+/**
+ * A Transaction object that is used to deserialize the JSON data in the Request body.
+ */
 public class Transaction {
 
     private double amount;
     private long timestamp;
 
     public Transaction() {
-
+        
+    }
+    
+    public Transaction(double amt, long time) {
+        amount = amt;
+        timestamp = time;
     }
 
     public double getAmount() {

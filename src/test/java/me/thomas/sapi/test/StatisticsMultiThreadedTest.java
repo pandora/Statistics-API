@@ -1,14 +1,26 @@
 package me.thomas.sapi.test;
 
-import static me.thomas.sapi.test.AssertionHelper.*;
-import static org.junit.Assert.*;
+import static me.thomas.sapi.lib.Time.nowMillis;
+import static me.thomas.sapi.test.helper.AssertionTestHelper.*;
+import static org.junit.Assert.assertEquals;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import com.anarsoft.vmlens.concurrent.junit.ConcurrentTestRunner;
 
 import me.thomas.sapi.statistics.Statistics;
 
-public class SingleThreadedTest {
+/**
+ * Run tests concurrently with 4 threads to ensure that in-memory mutating
+ * operations are correctly synchronized
+ */
+@RunWith(ConcurrentTestRunner.class)
+public class StatisticsMultiThreadedTest {
+
+    private static final int NO_OF_THREADS = 4;
 
     private Statistics stats;
 
@@ -18,25 +30,17 @@ public class SingleThreadedTest {
         stats.clear();
     }
 
-    @Test
-    public void sameWindowIntervalTest() {
-        stats = new Statistics();
-
-        long time = System.currentTimeMillis();
-
-        stats.addStatistic(10.0, time);
-        stats.addStatistic(20.0, time + 1000);
-        stats.addStatistic(20.5, time + 2000);
-
-        stats.refresh();
-        statisticsEquals(stats, 50.5, 16.833, 3, 20.5, 10);
-    }
-
-    @Test
+    @After
     public void multipleWindowIntervalTest() {
+        stats.refresh();
+        assertStatisticsEquals(stats, NO_OF_THREADS * 65.5, 16.375, NO_OF_THREADS * 4, 20.5, 10);
+    }
+    
+    @Test
+    public void multipleWindowIntervalThreadedTest() {
         stats.setSlidingWindow(10);
 
-        long time = System.currentTimeMillis();
+        long time = nowMillis();
 
         // Add statistics into the current time window; they should all be added
         stats.addStatistic(15.0, time - 1500);
@@ -44,7 +48,7 @@ public class SingleThreadedTest {
         stats.addStatistic(20.0, time - 4000);
         stats.addStatistic(20.5, time - 5000);
 
-        assertEquals(4, stats.transactionCount());
+        //assertEquals(4, stats.transactionCount());
 
         // Shorten sliding window to force eviction of three transactions
         stats.setSlidingWindow(2);
@@ -54,16 +58,12 @@ public class SingleThreadedTest {
          * transaction cleanup should leave one transaction from the previous window
          */
         stats.addStatistic(10.0, time);
-        assertEquals(2, stats.transactionCount());
 
         stats.addStatistic(20.0, time);
         stats.addStatistic(20.5, time);
 
         // Older than time window, so should be ignored completely
         stats.addStatistic(150, time - 50000);
-
-        stats.refresh();
-        statisticsEquals(stats, 65.5, 16.375, 4, 20.5, 10);
     }
 
 }
