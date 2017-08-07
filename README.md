@@ -72,11 +72,13 @@ java -cp target/sapi-0.0.1.jar me.thomas.sapi.Application
 * Once the server is up and running, API requests can be crafted with cURL to test the endpoints (assuming you have a current timestamp in milliseconds):
 
 ~~~
-$ curl -X POST http://localhost:4567/transactions -H 'content-type: application/json' -d '{"amount":15.0, "timestamp": 1502143684753}'
-$ curl -X POST http://localhost:4567/transactions -H 'content-type: application/json' -d '{"amount":15.0, "timestamp": 1502143684753}'
+$ python -c "import time; print(int(time.time()*1000))"
+$ 1502144714664
+
+$ curl -X POST http://localhost:4567/transactions -H 'content-type: application/json' -d '{"amount":15.0, "timestamp": 1502144714664}'
 
 $ curl http://localhost:4567/statistics
-{"sum":30.0,"avg":15.0,"max":15.0,"min":15.0,"count":2}
+$ {"sum":15.0,"avg":15.0,"max":15.0,"min":15.0,"count":1}
 ~~~
 
 ### Tests
