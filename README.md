@@ -21,15 +21,19 @@ Statistics API is a thread-safe, Jetty-backed application that processes basic s
     
 * On Ubuntu 16.04 LTS
 
+    ~~~
     $ sudo apt-get update
     $ sudo apt-get install maven
     $ sudo apt-get install default-jre default-jdk 
+    ~~~
 
 * On OS X El Capitan
 
+    ~~~
     $ brew update
     $ brew install maven
     $ brew cask install java
+    ~~~
     
 * Clone the repository from github and run the API server:
 
